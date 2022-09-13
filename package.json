@@ -1,0 +1,12 @@
+{
+  "name": "slack-motd",
+  "version": "0.0.1",
+  "description": "Slack bot for MOTD game",
+  "main": "index.js",
+  "repository": "git@github.com:Shad-Z/slack-motd.git",
+  "author": "Matthieu CHARDENAL <mchardenal@eleven-labs.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.8.3"
+  }
+}
