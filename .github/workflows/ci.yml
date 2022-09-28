@@ -17,5 +17,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: 'npm'
-      - run: npm lint
+          cache: 'yarn'
+          cache-dependency-path: functions/yarn.lock
+      - run: yarn
+      - run: yarn run lint
