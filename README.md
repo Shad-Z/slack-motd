@@ -1,6 +1,4 @@
-# slack-motd
-
-# MEME OF THE DAY (MOTD)
+# slack-motd / MEME OF THE DAY (MOTD)
 
 ## Principe 
 
@@ -35,9 +33,17 @@ Tout les jours un meme est posté. Les gens doivent écrire une phrase qui match
 * Création du slack de test (+ api key)
 * Création du repo (privé pour le moment)
 
-### Nice to have
+## Nice to have
 
 * Generer le meme avec la phrase du gagnant
 * Exploiter les datas
 * Open telemetry
 * docker
+
+## Comment utiliser en dev
+
+```shell
+npm install -g firebase-tools
+firebase login
+firebase emulators:start --only functions
+```
