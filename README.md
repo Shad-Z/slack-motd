@@ -45,5 +45,7 @@ Tout les jours un meme est posté. Les gens doivent écrire une phrase qui match
 ```shell
 npm install -g firebase-tools
 firebase login
-firebase emulators:start --only functions
+cd functions
+export SLACK_TOKEN=<le token slack>
+npm run serve
 ```
