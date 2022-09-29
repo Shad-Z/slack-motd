@@ -49,3 +49,16 @@ cd functions
 export SLACK_TOKEN=<le token slack>
 npm run serve
 ```
+
+## Comment set la config dans firebase
+
+```shell
+firebase functions:config:set slack.token="le token"
+firebase functions:config:set slack.channel="meme-of-the-day-game"
+```
+
+## Comment déployer
+
+```shell
+firebase deploy --only functions
+```
