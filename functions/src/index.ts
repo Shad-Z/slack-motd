@@ -46,14 +46,21 @@ const postMeme = (callback: { (jsonBody: string): void; } | null) => {
   slackReq.end();
 };
 
-export const fnPostMeme = functions.https.onRequest((request, response) => {
-  postMeme((jsonBody: string) => {
-    response.header("content-type", "application/json");
-    response.send(jsonBody);
-  });
-});
+export const fnPostMeme = functions
+    .region("europe-west1")
+    .https
+    .onRequest((request, response) => {
+      postMeme((jsonBody: string) => {
+        response.header("content-type", "application/json");
+        response.send(jsonBody);
+      });
+    });
 
-exports.scheduledFunction = functions.pubsub.schedule("every 1 day")
+exports.scheduledFunction = functions
+    .region("europe-west1")
+    .pubsub
+    .schedule("every tuesday 09:00")
+    .timeZone("Europe/Paris")
     .onRun(() => {
       postMeme(null);
       return null;
