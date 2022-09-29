@@ -6,7 +6,7 @@ const SLACK_CHANNEL = functions.config().slack?.channel ||
     process.env.SLACK_CHANNEL ||
     "meme-of-the-day-game";
 
-const postMeme = (callback: { (jsonBody: string): void; }) => {
+const postMeme = (callback: { (jsonBody: string): void; } | null) => {
   functions.logger.info("Start function postMeme");
   const message = {
     channel: SLACK_CHANNEL,
@@ -36,7 +36,9 @@ const postMeme = (callback: { (jsonBody: string): void; }) => {
           "Output slack response",
           {ok: jsonBody.ok, error: jsonBody?.error}
       );
-      callback(body);
+      if (callback) {
+        callback(body);
+      }
     });
   });
   functions.logger.info("Posting meme to slack channel", {payload: message});
@@ -51,7 +53,8 @@ export const fnPostMeme = functions.https.onRequest((request, response) => {
   });
 });
 
-exports.scheduledFunction = functions.pubsub.schedule('every 1 day').onRun(() => {
-  postMeme(() => {})
-  return null;
-});
+exports.scheduledFunction = functions.pubsub.schedule("every 1 day")
+    .onRun(() => {
+      postMeme(null);
+      return null;
+    });
