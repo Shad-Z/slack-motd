@@ -50,3 +50,8 @@ export const fnPostMeme = functions.https.onRequest((request, response) => {
     response.send(jsonBody);
   });
 });
+
+exports.scheduledFunction = functions.pubsub.schedule('every 1 day').onRun((context) => {
+  postMeme(() => {})
+  return null;
+});
