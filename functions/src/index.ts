@@ -51,7 +51,7 @@ export const fnPostMeme = functions.https.onRequest((request, response) => {
   });
 });
 
-exports.scheduledFunction = functions.pubsub.schedule('every 1 day').onRun((context) => {
+exports.scheduledFunction = functions.pubsub.schedule('every 1 day').onRun(() => {
   postMeme(() => {})
   return null;
 });
