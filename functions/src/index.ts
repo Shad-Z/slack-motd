@@ -1,16 +1,39 @@
 import * as functions from "firebase-functions";
 import * as https from "https";
+import * as admin from "firebase-admin";
+import * as util from "util";
 
 const SLACK_TOKEN = functions.config().slack?.token || process.env.SLACK_TOKEN;
 const SLACK_CHANNEL = functions.config().slack?.channel ||
     process.env.SLACK_CHANNEL ||
     "meme-of-the-day-game";
+const FIREBASE_STORAGE_BUCKET_NAME = functions.config().storage?.bucketname ||
+    process.env.FIREBASE_STORAGE_BUCKET_NAME;
+const FIREBASE_STORAGE_BASE_URL = "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media&token=%s";
 
-const postMeme = (callback: { (jsonBody: string): void; } | null) => {
+admin.initializeApp();
+
+const postMeme = async (callback: { (jsonBody: string): void; } | null) => {
+  const memeUrls: string[] = [];
   functions.logger.info("Start function postMeme");
+  const files = await admin.storage()
+      .bucket()
+      .getFiles();
+
+  for (const f of files[0]) {
+    const fileMetadata = await f.getMetadata();
+    const url = util.format(
+        FIREBASE_STORAGE_BASE_URL,
+        FIREBASE_STORAGE_BUCKET_NAME,
+        encodeURI(fileMetadata[0].name),
+        fileMetadata[0].metadata.firebaseStorageDownloadTokens,
+    );
+    memeUrls.push(url);
+  }
+  const memeUrl = memeUrls[Math.floor(Math.random() * memeUrls.length)];
   const message = {
     channel: SLACK_CHANNEL,
-    text: "https://imgflip.com/s/meme/Distracted-Boyfriend.jpg",
+    text: memeUrl,
   };
   const url = "https://slack.com/api/chat.postMessage";
   const options = {
