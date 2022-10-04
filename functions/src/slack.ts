@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import * as https from "https";
 import * as http from "http";
-import * as appConfig from "./config"
+import * as appConfig from "./config";
 
 const postToSlack = async (text: string, callback: { (jsonBody: string): void; } | null) => {
   const slackReq = (text: string): Promise<http.IncomingMessage> => {
@@ -43,14 +43,14 @@ const postToSlack = async (text: string, callback: { (jsonBody: string): void; }
         );
         res(jsonBody);
       });
-    })
-  }
+    });
+  };
 
   const slackRes = await slackReq(text);
-  const jsonBody = await promiseRes(slackRes)
+  const jsonBody = await promiseRes(slackRes);
   if (callback) {
-    callback(jsonBody)
+    callback(jsonBody);
   }
 };
 
-export {postToSlack}
+export {postToSlack};

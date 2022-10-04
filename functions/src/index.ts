@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
-import * as slack from './slack';
-import * as config from './config';
+import * as slack from "./slack";
+import * as config from "./config";
 import * as admin from "firebase-admin";
 import * as util from "util";
 
@@ -45,5 +45,15 @@ exports.scheduledFunction = functions
     .timeZone("Europe/Paris")
     .onRun(() => {
       postMeme(null);
+      return null;
+    });
+
+exports.scheduledPostResult = functions
+    .region("europe-west1")
+    .pubsub
+    .schedule("every tuesday 17:00")
+    .timeZone("Europe/Paris")
+    .onRun(() => {
+      functions.logger.info("Post result")
       return null;
     });
