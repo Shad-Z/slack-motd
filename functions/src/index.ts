@@ -88,3 +88,13 @@ exports.scheduledFunction = functions
       postMeme(null);
       return null;
     });
+
+exports.scheduledPostResult = functions
+    .region("europe-west1")
+    .pubsub
+    .schedule("every tuesday 17:00")
+    .timeZone("Europe/Paris")
+    .onRun(() => {
+      functions.logger.info("Post result")
+      return null;
+    });
