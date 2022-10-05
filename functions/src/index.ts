@@ -7,14 +7,7 @@ admin.initializeApp();
 
 const postMeme = async (callback: { (jsonBody: string): void; } | null) => {
   functions.logger.info("Start function postMeme");
-  let meme: string;
-  try {
-    meme = await memeChooser.chooseMeme();
-  } catch (e) {
-    functions.logger.error(e);
-    return;
-  }
-
+  const meme = await memeChooser.chooseMeme();
   const responseContent = await slack.postToSlack(meme);
   if (callback) {
     callback(responseContent);
