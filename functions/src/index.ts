@@ -1,31 +1,21 @@
 import * as functions from "firebase-functions";
 import * as slack from "./slack";
-import * as config from "./config";
 import * as admin from "firebase-admin";
-import * as util from "util";
+import * as memeChooser from "./meme-chooser";
 
 admin.initializeApp();
 
 const postMeme = async (callback: { (jsonBody: string): void; } | null) => {
   functions.logger.info("Start function postMeme");
-  const memeUrls: string[] = [];
-  functions.logger.info("Start function postMeme");
-  const files = await admin.storage()
-      .bucket()
-      .getFiles();
-
-  for (const f of files[0]) {
-    const fileMetadata = await f.getMetadata();
-    const url = util.format(
-        config.FIREBASE_STORAGE_BASE_URL,
-        config.FIREBASE_STORAGE_BUCKET_NAME,
-        encodeURI(fileMetadata[0].name),
-        fileMetadata[0].metadata.firebaseStorageDownloadTokens,
-    );
-    memeUrls.push(url);
+  let meme: string;
+  try {
+    meme = await memeChooser.chooseMeme();
+  } catch (e) {
+    functions.logger.error(e);
+    return;
   }
-  const memeUrl = memeUrls[Math.floor(Math.random() * memeUrls.length)] ?? "no meme found in storage";
-  await slack.postToSlack(memeUrl, callback);
+
+  await slack.postToSlack(meme, callback);
 };
 
 export const fnPostMeme = functions
@@ -54,6 +44,6 @@ exports.scheduledPostResult = functions
     .schedule("every tuesday 17:00")
     .timeZone("Europe/Paris")
     .onRun(() => {
-      functions.logger.info("Post result")
+      functions.logger.info("Post result");
       return null;
     });
