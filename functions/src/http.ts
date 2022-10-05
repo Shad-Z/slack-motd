@@ -20,7 +20,7 @@ const createRequest = (url: string, method: string, jsonContent = ""): Promise<h
   });
 };
 
-const responseReader = (httpResponse: http.IncomingMessage): Promise<string> => {
+const responseReader = (httpResponse: http.IncomingMessage): Promise<any> => {
   return new Promise((resolve) => {
     let body = "";
     httpResponse.on("data", (data: string) => {
