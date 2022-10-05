@@ -15,7 +15,10 @@ const postMeme = async (callback: { (jsonBody: string): void; } | null) => {
     return;
   }
 
-  await slack.postToSlack(meme, callback);
+  const responseContent = await slack.postToSlack(meme);
+  if (callback) {
+    callback(responseContent);
+  }
 };
 
 export const fnPostMeme = functions
