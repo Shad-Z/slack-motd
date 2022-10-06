@@ -10,30 +10,18 @@ const gather = async () => {
   const aggregation = messages.map((current: { reactions: { name: string, count: number }[]; user: string; }) => {
     const totalReaction = current?.reactions?.find((el) => el.name === "white_check_mark")?.count;
 
-    console.log(totalReaction);
     return {
       user: current?.user,
       totalReaction: totalReaction ?? 0,
     };
   });
 
-  console.log(aggregation);
 
-  // const lol = aggregation.reduce((previousValue, currentValue) => {
-  //     if (previousValue.length === 0) {
-  //         return currentValue;
-  //     }
-  //
-  //     if (previousValue[0]?.totalReaction < currentValue?.total) {
-  //         return [currentValue];
-  //     }
-  //
-  //     if (previousValue[0]?.totalReaction === currentValue?.totalReaction) {
-  //         return [...previousValue, currentValue];
-  //     }
-  //
-  //     return previousValue;
-  // }, [])
+  if (!aggregation) {
+    await postToSlack("Pas de gagnant aujourd'hui bande de fainéant");
+
+    return;
+  }
 
   aggregation.sort((a: { totalReaction: number; }, b: { totalReaction: number; }) => {
     if (a?.totalReaction > b?.totalReaction) {
@@ -46,10 +34,7 @@ const gather = async () => {
     return 0;
   });
 
-  await postToSlack(`Le gagnant est <@${aggregation[0].user}>`);
-
-  console.log(aggregation);
-  // console.log(Math.max.apply(Math, aggregation.map((o) => { return o?.totalReaction || 0; })));
+  await postToSlack(`Le gagnant est <@${aggregation[0].user}> avec ${aggregation[0].totalReaction}`);
 };
 
 export {gather};

@@ -20,6 +20,7 @@ const createRequest = (url: string, method: string, jsonContent = ""): Promise<h
   });
 };
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 const responseReader = (httpResponse: http.IncomingMessage): Promise<any> => {
   return new Promise((resolve) => {
     let body = "";
