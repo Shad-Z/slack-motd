@@ -49,7 +49,7 @@ exports.scheduledPostResult = functions
     .pubsub
     .schedule("every tuesday 17:00")
     .timeZone("Europe/Paris")
-    .onRun(() => {
-      functions.logger.info("Post result");
+    .onRun(async () => {
+      await gather();
       return null;
     });
