@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import * as slack from "./slack";
 import * as admin from "firebase-admin";
 import * as memeChooser from "./meme-chooser";
+import {gather} from "./gather";
 
 admin.initializeApp();
 
@@ -22,6 +23,15 @@ export const fnPostMeme = functions
         response.header("content-type", "application/json");
         response.send(jsonBody);
       });
+    });
+
+export const fnGatherResult = functions
+    .region("europe-west1")
+    .https
+    .onRequest(async (request, response) => {
+      await gather();
+      response.header("content-type", "application/json");
+      response.send();
     });
 
 exports.scheduledFunction = functions
