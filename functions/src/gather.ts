@@ -1,7 +1,6 @@
 import {postToSlack, getReplies, getHistories} from "./slack";
 
 const gather = async () => {
-  console.log("Start");
   const histories = await getHistories();
   const tsLastMessage = histories?.messages[0]?.ts;
   const replies = await getReplies(tsLastMessage);
@@ -16,8 +15,7 @@ const gather = async () => {
     };
   });
 
-
-  if (!aggregation) {
+  if (aggregation.length === 0) {
     await postToSlack("Pas de gagnant aujourd'hui bande de fainéant");
 
     return;
