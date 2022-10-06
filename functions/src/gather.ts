@@ -34,7 +34,7 @@ const gather = async () => {
     return 0;
   });
 
-  await postToSlack(`Le gagnant est <@${aggregation[0].user}> avec ${aggregation[0].totalReaction}`);
+  await postToSlack(`Le gagnant est <@${aggregation[0].user}> avec ${aggregation[0].totalReaction} réactions`);
 };
 
 export {gather};
