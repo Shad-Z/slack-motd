@@ -42,22 +42,24 @@ Tout les jours un meme est posté. Les gens doivent écrire une phrase qui match
 
 ## Comment utiliser en dev
 
+Remplir le .env
+
 ```shell
 npm install -g firebase-tools
 firebase login
 cd functions
-export SLACK_TOKEN=<le token slack>
-npm run serve
+yarn run serve
 ```
 
-## Comment set la config dans firebase
+et dans un autre terminal
 
 ```shell
-firebase functions:config:set slack.token="le token"
-firebase functions:config:set slack.channel="meme-of-the-day-game"
+yarn run build:watch
 ```
 
 ## Comment déployer
+
+Remplir le .env avec les infos de prod
 
 ```shell
 firebase deploy --only functions
