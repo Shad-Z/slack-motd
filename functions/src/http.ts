@@ -3,8 +3,9 @@ import * as https from "https";
 import * as http from "http";
 import * as appConfig from "./config";
 
-const createRequest = (url: string, method: string, jsonContent = ""): Promise<http.IncomingMessage> => {
+const createRequest = (path: string, method: string, jsonContent = ""): Promise<http.IncomingMessage> => {
   return new Promise((resolve) => {
+    const url = new URL(path, "https://slack.com/api/");
     const options = {
       headers: {
         "Authorization": "Bearer " + appConfig.SLACK_TOKEN,

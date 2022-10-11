@@ -7,27 +7,27 @@ const postToSlack = async (text: string): Promise<string> => {
     text: text,
   };
   const slackRes = await createRequest(
-      "https://slack.com/api/chat.postMessage",
+      "chat.postMessage",
       "POST",
       JSON.stringify(message),
   );
-  return await responseReader(slackRes);
+  return responseReader(slackRes);
 };
 
 const getHistories = async () => {
   const slackRes = await createRequest(
-      `https://slack.com/api/conversations.history?channel=${appConfig.SLACK_CHANNEL}&limit=1`,
+      `conversations.history?channel=${appConfig.SLACK_CHANNEL}&limit=1`,
       "GET",
   );
-  return await responseReader(slackRes);
+  return responseReader(slackRes);
 };
 
 const getReplies = async (tsLastMessage: string) => {
   const slackRes = await createRequest(
-      `https://slack.com/api/conversations.replies?channel=${appConfig.SLACK_CHANNEL}&ts=${tsLastMessage}`,
+      `conversations.replies?channel=${appConfig.SLACK_CHANNEL}&ts=${tsLastMessage}`,
       "GET",
   );
-  return await responseReader(slackRes);
+  return responseReader(slackRes);
 };
 
 export {postToSlack, getHistories, getReplies};
