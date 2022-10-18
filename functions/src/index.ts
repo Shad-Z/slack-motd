@@ -3,6 +3,7 @@ import * as slack from "./slack";
 import * as admin from "firebase-admin";
 import * as memeChooser from "./meme-chooser";
 import {gather} from "./gather";
+import {receiver} from "./app_slack";
 
 admin.initializeApp();
 
@@ -26,3 +27,15 @@ exports.scheduledPostResult = functions
       await gather();
       return null;
     });
+
+exports.slack = functions
+    .region("europe-west1")
+    .runWith({
+      memory: "1GB",
+      secrets: [
+        // "SLACK_TOKEN",
+        // "SLACK_SIGNING_SECRET",
+      //   "SLACK_APP_TOKEN",
+      ],
+    })
+    .https.onRequest(receiver.app);
