@@ -2,22 +2,21 @@ import * as admin from "firebase-admin";
 import * as config from "./config";
 import * as util from "util";
 
-export const getMemeUrls = async () => {
-  const memeUrls: string[] = [];
+export const getMemeUrls = async (): Promise<string[]> => {
   const files = await admin.storage()
       .bucket()
       .getFiles();
 
-  for (const f of files[0]) {
-    const fileMetadata = await f.getMetadata();
-    const url = util.format(
-        config.STORAGE_BASE_URL,
-        config.STORAGE_BUCKET_NAME,
-        encodeURI(fileMetadata[0].name),
-        fileMetadata[0].metadata.firebaseStorageDownloadTokens,
-    );
-    memeUrls.push(url);
-  }
+  return Promise.all(
+      files[0].map(async (f) => {
+        const fileMetadata = await f.getMetadata();
 
-  return memeUrls;
+        return util.format(
+            "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media&token=%s",
+            config.STORAGE_BUCKET_NAME,
+            encodeURI(fileMetadata[0].name),
+            fileMetadata[0].metadata.firebaseStorageDownloadTokens,
+        );
+      })
+  );
 };
