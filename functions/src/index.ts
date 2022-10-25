@@ -4,6 +4,7 @@ import * as admin from "firebase-admin";
 import * as memeChooser from "./meme-chooser";
 import {gather} from "./gather";
 import {postView} from "./slack";
+import {verifySlackSignature} from "./verify-slack-signature";
 
 admin.initializeApp();
 
@@ -11,7 +12,13 @@ exports.httpWebhook = functions
     .region("europe-west1")
     .https
     .onRequest(async (request, response) => {
-      functions.logger.info("received log", request.body);
+      if (!verifySlackSignature(request)) {
+        response.statusCode = 403;
+        response.header("content-type", "application/json");
+        response.send({"message": "failed to check signature"});
+        return;
+      }
+
       if (request.body.type == "url_verification") {
         response.header("content-type", "application/json");
         response.send({"challenge": request.body.challenge});
