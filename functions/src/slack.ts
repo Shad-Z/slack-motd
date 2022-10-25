@@ -30,4 +30,17 @@ const getReplies = async (tsLastMessage: string) => {
   return responseReader(slackRes);
 };
 
-export {postToSlack, getHistories, getReplies};
+const postView = async (userId: string, view: string) => {
+  const message = {
+    user_id: userId,
+    view: view,
+  };
+  const slackRes = await createRequest(
+      "https://slack.com/api/views.publish",
+      "POST",
+      JSON.stringify(message),
+  );
+  return responseReader(slackRes);
+};
+
+export {postToSlack, getHistories, getReplies, postView};
