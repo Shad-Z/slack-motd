@@ -7,7 +7,7 @@ const gather = async () => {
   const messages = replies.messages?.slice(1);
 
   const aggregation = messages.map((current: { reactions: { name: string, count: number }[]; user: string; }) => {
-    const totalReaction = current?.reactions?.find((el) => el.name === "white_check_mark")?.count;
+    const totalReaction = current?.reactions?.find((el) => el.name === "white_check_mark")?.count ?? 0;
 
     if (totalReaction === 0) {
       return;
@@ -15,7 +15,7 @@ const gather = async () => {
 
     return {
       user: current?.user,
-      totalReaction: totalReaction ?? 0,
+      totalReaction: totalReaction,
     };
   });
 
