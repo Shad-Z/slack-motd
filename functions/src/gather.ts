@@ -9,6 +9,10 @@ const gather = async () => {
   const aggregation = messages.map((current: { reactions: { name: string, count: number }[]; user: string; }) => {
     const totalReaction = current?.reactions?.find((el) => el.name === "white_check_mark")?.count ?? 0;
 
+    if (totalReaction <= 0) {
+      return;
+    }
+
     return {
       user: current?.user,
       totalReaction: totalReaction,
