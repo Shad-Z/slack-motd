@@ -19,7 +19,7 @@ const gather = async () => {
     };
   });
 
-  if (aggregation.length === 0) {
+  if (aggregation.filter((el: { user: string; totalReaction: number}) => el).length === 0) {
     await postToSlack("Pas de gagnant aujourd'hui bande de fainéant");
 
     return;
