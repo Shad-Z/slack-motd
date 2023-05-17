@@ -1,7 +1,8 @@
 import * as appConfig from "./config";
 import {createRequest, responseReader} from "./http";
 
-const postToSlack = async (text: string): Promise<string> => {
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+const postToSlack = async (text: string): Promise<any> => {
   const message = {
     channel: appConfig.SLACK_CHANNEL,
     text: text,
