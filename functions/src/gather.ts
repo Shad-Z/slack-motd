@@ -1,8 +1,6 @@
-import {postToSlack, getReplies, getHistories} from "./slack";
+import {postToSlack, getReplies} from "./slack";
 
-const gather = async () => {
-  const histories = await getHistories();
-  const tsLastMessage = histories?.messages[0]?.ts;
+const gather = async (tsLastMessage: string) => {
   const replies = await getReplies(tsLastMessage);
   const messages = replies.messages?.slice(1);
 
