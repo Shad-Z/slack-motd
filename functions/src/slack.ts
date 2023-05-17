@@ -15,14 +15,6 @@ const postToSlack = async (text: string): Promise<any> => {
   return responseReader(slackRes);
 };
 
-const getHistories = async () => {
-  const slackRes = await createRequest(
-      `https://slack.com/api/conversations.history?channel=${appConfig.SLACK_CHANNEL}&limit=1`,
-      "GET",
-  );
-  return responseReader(slackRes);
-};
-
 const getReplies = async (tsLastMessage: string) => {
   const slackRes = await createRequest(
       `https://slack.com/api/conversations.replies?channel=${appConfig.SLACK_CHANNEL}&ts=${tsLastMessage}`,
@@ -44,4 +36,4 @@ const postView = async (userId: string, view: string) => {
   return responseReader(slackRes);
 };
 
-export {postToSlack, getHistories, getReplies, postView};
+export {postToSlack, getReplies, postView};

@@ -34,6 +34,19 @@ exports.scheduledPostResult = functions
     .schedule("every tuesday 17:00")
     .timeZone("Europe/Paris")
     .onRun(async () => {
-      await gather();
+      const docRef = db.collection("slack").doc("latest");
+      const doc = await docRef.get();
+      if (!doc.exists) {
+        functions.logger.error("No such document!");
+        return null;
+      }
+      const docData = doc.data();
+      const tsLastMessage = docData?.message?.ts;
+      if (!tsLastMessage) {
+        functions.logger.error("ts not found", docData);
+        return null;
+      }
+
+      await gather(tsLastMessage);
       return null;
     });
