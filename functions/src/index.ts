@@ -4,8 +4,10 @@ import * as admin from "firebase-admin";
 import * as memeChooser from "./meme-chooser";
 import {gather} from "./gather";
 import {httpWebhookController} from "./http-webhook-controller";
+import {getFirestore} from "firebase-admin/firestore";
 
 admin.initializeApp();
+const db = getFirestore();
 
 exports.httpWebhook = functions
     .region("europe-west1")
@@ -19,7 +21,10 @@ exports.scheduledFunction = functions
     .timeZone("Europe/Paris")
     .onRun(async () => {
       const meme = await memeChooser.chooseMeme();
-      await slack.postToSlack(meme);
+      const response = await slack.postToSlack(meme);
+      const docRef = db.collection("slack").doc("latest");
+      await docRef.set(response);
+
       return null;
     });
 
