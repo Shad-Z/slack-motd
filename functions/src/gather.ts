@@ -4,37 +4,51 @@ const gather = async (tsLastMessage: string) => {
   const replies = await getReplies(tsLastMessage);
   const messages = replies.messages?.slice(1);
 
-  const aggregation = messages.map((current: { reactions: { name: string, count: number }[]; user: string; }) => {
-    const totalReaction = current?.reactions?.find((el) => el.name === "white_check_mark")?.count ?? 0;
+  const aggregation = messages.map((current: { reactions: { name: string, count: number }[]; user: string; text: string; }) => {
+    const totalPositiveReaction = current?.reactions?.find((el) => el.name === "white_check_mark")?.count ?? 0;
+    const totalNegativeReaction = current?.reactions?.find((el) => el.name === "hankey")?.count ?? 0;
 
-    if (totalReaction <= 0) {
-      return;
-    }
 
     return {
       user: current?.user,
-      totalReaction: totalReaction,
+      totalPositiveReaction,
+      totalNegativeReaction,
+      message: current.text,
     };
   });
 
-  if (aggregation.filter((el: { user: string; totalReaction: number}) => el).length === 0) {
-    await postToSlack("Pas de gagnant aujourd'hui bande de fainéant");
+  const maxPositiveReaction = Math.max(...aggregation.map(
+      (current: { totalPositiveReaction: number; }) => current.totalPositiveReaction)
+  );
+  const maxNegativeReaction = Math.max(...aggregation.map(
+      (current: { totalNegativeReaction: number; }) => current.totalNegativeReaction)
+  );
+
+  if (maxPositiveReaction === 0) {
+    await postToSlack("<!channel> Pas de gagnant aujourd'hui bande de fainéant");
 
     return;
   }
 
-  aggregation.sort((a: { totalReaction: number; }, b: { totalReaction: number; }) => {
-    if (a?.totalReaction > b?.totalReaction) {
-      return -1;
-    }
-    if (a?.totalReaction < b?.totalReaction) {
-      return 1;
-    }
-    // a must be equal to b
-    return 0;
-  });
+  const winners = aggregation.filter(
+      (current: {totalPositiveReaction: number;}) => current.totalPositiveReaction === maxPositiveReaction
+  );
+  const losers = aggregation.filter(
+      (current: {totalNegativeReaction: number;}) => current.totalNegativeReaction === maxNegativeReaction
+  );
 
-  await postToSlack(`Le gagnant est <@${aggregation[0].user}> avec ${aggregation[0].totalReaction} réactions`);
+  const msg = `<!channel>
+  Les gagnants sont :
+    ${winners.map((winner: {user: string; totalPositiveReaction: number; message: string;}) => `
+    * <@${winner.user}> avec ${winner.totalPositiveReaction} réactions :white_check_mark: et la phrase _*${winner.message}*_`
+  ).join("")}
+  ${maxNegativeReaction === 0 ? "" : `Les personnes absolument pas drôles sont :
+    ${losers.map((loser: {user: string; totalNegativeReaction: number; message: string;}) => `
+    * <@${loser.user}> avec ${loser.totalNegativeReaction} réactions :hankey: et la phrase _*${loser.message}*_`
+).join("")}
+  `}`;
+
+  await postToSlack(msg);
 };
 
 export {gather};
