@@ -21,7 +21,18 @@ exports.scheduledFunction = functions
     .timeZone("Europe/Paris")
     .onRun(async () => {
       const meme = await memeChooser.chooseMeme();
-      const response = await slack.postToSlack(meme);
+      const msg = `<!here> ${meme}
+Rappel des règles :
+
+Tous les mardis, un meme est posté à 9h du matin dans #meme-of-the-week
+Le but du jeu est de poster une phrase afin de créer le meme le plus drôle possible
+Chaque joueur vote ensuite, avec l'emoji :white_check_mark:, pour les phrases qui le font le plus rire
+Le joueur ayant reçu le plus de :white_check_mark: à la fin de la journée gagne !
+(Rien à gagner pour l'instant sauf l'immense honneur d'être Mr/Mme FUN)
+
+Vous pouvez aussi voter pour la pire phrase avec un beau :hankey:, les perdants seront bien entendu shame comme il se doit !
+`;
+      const response = await slack.postToSlack(msg);
       const docRef = db.collection("slack").doc("latest");
       await docRef.set(response);
 
@@ -31,7 +42,7 @@ exports.scheduledFunction = functions
 exports.scheduledPostResult = functions
     .region("europe-west1")
     .pubsub
-    .schedule("every tuesday 17:00")
+    .schedule("every tuesday 18:30")
     .timeZone("Europe/Paris")
     .onRun(async () => {
       const docRef = db.collection("slack").doc("latest");
@@ -48,5 +59,6 @@ exports.scheduledPostResult = functions
       }
 
       await gather(tsLastMessage);
+
       return null;
     });
