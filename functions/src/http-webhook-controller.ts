@@ -125,6 +125,14 @@ const homepageView = {
             "l'instant sauf l'immense honneur d'être *Mr/Mme FUN*)",
       },
     },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "Vous pouvez aussi voter pour la pire phrase avec un beau :hankey:, " +
+          "les perdants seront bien entendu shame comme il se doit !",
+      },
+    },
   ],
 };
 
