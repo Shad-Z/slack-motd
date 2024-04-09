@@ -62,3 +62,14 @@ exports.scheduledPostResult = functions
 
       return null;
     });
+
+exports.scheduledRappelVote = functions
+    .region("europe-west1")
+    .pubsub
+    .schedule("every tuesday 17:30")
+    .timeZone("Europe/Paris")
+    .onRun(async () => {
+      await slack.postToSlack("<!here> Hop hop hop ! On oublie pas de voter pour Mr/Mme FUN :) Résultat à 18h30 !");
+
+      return null;
+    });
