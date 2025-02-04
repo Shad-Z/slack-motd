@@ -1,6 +1,6 @@
 import {verifySlackSignature} from "./verify-slack-signature";
 import {postView} from "./slack";
-import {Request} from "firebase-functions/lib/providers/https";
+import {Request} from "firebase-functions/v2/https";
 import * as express from "express";
 import * as functions from "firebase-functions";
 import {createRequest} from "./http";
@@ -56,9 +56,9 @@ const httpWebhookController = async (request: Request, response: express.Respons
     }
 
     await createRequest(
-        "https://slack.com/api/chat.postMessage",
-        "POST",
-        JSON.stringify(message),
+      "https://slack.com/api/chat.postMessage",
+      "POST",
+      JSON.stringify(message),
     );
     response.header("content-type", "application/json");
     response.send({});

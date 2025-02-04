@@ -31,11 +31,11 @@ const responseReader = (httpResponse: http.IncomingMessage): Promise<any> => {
     httpResponse.on("end", () => {
       const jsonBody = JSON.parse(body);
       const logResponseAs = jsonBody.ok ?
-          functions.logger.info :
-          functions.logger.error;
+        functions.logger.info :
+        functions.logger.error;
       logResponseAs(
-          "Output slack response",
-          {ok: jsonBody.ok, error: jsonBody?.error}
+        "Output slack response",
+        {ok: jsonBody.ok, error: jsonBody?.error}
       );
       resolve(jsonBody);
     });

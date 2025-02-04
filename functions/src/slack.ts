@@ -8,17 +8,17 @@ const postToSlack = async (text: string): Promise<any> => {
     text: text,
   };
   const slackRes = await createRequest(
-      "https://slack.com/api/chat.postMessage",
-      "POST",
-      JSON.stringify(message),
+    "https://slack.com/api/chat.postMessage",
+    "POST",
+    JSON.stringify(message),
   );
   return responseReader(slackRes);
 };
 
 const getReplies = async (tsLastMessage: string) => {
   const slackRes = await createRequest(
-      `https://slack.com/api/conversations.replies?channel=${appConfig.SLACK_CHANNEL}&ts=${tsLastMessage}`,
-      "GET",
+    `https://slack.com/api/conversations.replies?channel=${appConfig.SLACK_CHANNEL}&ts=${tsLastMessage}`,
+    "GET",
   );
   return responseReader(slackRes);
 };
@@ -29,9 +29,9 @@ const postView = async (userId: string, view: string) => {
     view: view,
   };
   const slackRes = await createRequest(
-      "https://slack.com/api/views.publish",
-      "POST",
-      JSON.stringify(message),
+    "https://slack.com/api/views.publish",
+    "POST",
+    JSON.stringify(message),
   );
   return responseReader(slackRes);
 };

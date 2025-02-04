@@ -18,10 +18,10 @@ const gather = async (tsLastMessage: string) => {
   });
 
   const maxPositiveReaction = Math.max(...aggregation.map(
-      (current: { totalPositiveReaction: number; }) => current.totalPositiveReaction)
+    (current: { totalPositiveReaction: number; }) => current.totalPositiveReaction)
   );
   const maxNegativeReaction = Math.max(...aggregation.map(
-      (current: { totalNegativeReaction: number; }) => current.totalNegativeReaction)
+    (current: { totalNegativeReaction: number; }) => current.totalNegativeReaction)
   );
 
   if (maxPositiveReaction === 0) {
@@ -31,10 +31,10 @@ const gather = async (tsLastMessage: string) => {
   }
 
   const winners = aggregation.filter(
-      (current: {totalPositiveReaction: number;}) => current.totalPositiveReaction === maxPositiveReaction
+    (current: {totalPositiveReaction: number;}) => current.totalPositiveReaction === maxPositiveReaction
   );
   const losers = aggregation.filter(
-      (current: {totalNegativeReaction: number;}) => current.totalNegativeReaction === maxNegativeReaction
+    (current: {totalNegativeReaction: number;}) => current.totalNegativeReaction === maxNegativeReaction
   );
 
   const msg = `<!channel>
@@ -45,7 +45,7 @@ const gather = async (tsLastMessage: string) => {
   ${maxNegativeReaction === 0 ? "" : `Les personnes absolument pas drôles sont :
     ${losers.map((loser: {user: string; totalNegativeReaction: number; message: string;}) => `
     * <@${loser.user}> avec ${loser.totalNegativeReaction} réactions :hankey: et la phrase _*${loser.message}*_`
-).join("")}
+  ).join("")}
   `}`;
 
   await postToSlack(msg);
