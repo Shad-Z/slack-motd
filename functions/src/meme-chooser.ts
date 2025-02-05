@@ -1,7 +1,11 @@
 import * as fileFetcher from "./file-fetcher";
 import * as randomizer from "./randomizer";
 
-export const chooseMeme = async () => {
+export const chooseMeme = async (history: string[]): Promise<{ url: string, name: string }> => {
   const memeUrls = await fileFetcher.getMemeUrls();
-  return randomizer.pickOne(memeUrls);
+  const filteredMemeUrl = memeUrls.filter((v) => {
+    return !history.includes(v.name);
+  });
+
+  return randomizer.pickOne(filteredMemeUrl);
 };
