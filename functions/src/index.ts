@@ -68,8 +68,7 @@ exports.scheduledPostResult = onSchedule({schedule: "every tuesday 18:30", timeZ
     return;
   }
 
-  await gather(tsLastMessage);
-
+  await gather(tsLastMessage, db);
 });
 
 // exports.scheduledRappelVote = onSchedule({schedule: "

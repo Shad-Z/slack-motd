@@ -1,10 +1,10 @@
 import {postToSlack, getReplies} from "./slack";
 import {logger} from "firebase-functions";
-import {getFirestore} from "firebase-admin/firestore";
+import {firestore} from "firebase-admin";
+import Firestore = firestore.Firestore;
 
-const db = getFirestore();
 
-const gather = async (tsLastMessage: string) => {
+const gather = async (tsLastMessage: string, db: Firestore) => {
   const replies = await getReplies(tsLastMessage);
   const messages = replies.messages?.slice(1);
 
