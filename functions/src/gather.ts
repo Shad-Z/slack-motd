@@ -21,16 +21,18 @@ const gather = async (tsLastMessage: string, db: Firestore) => {
     };
   });
 
+  logger.debug(aggregation);
+  await db.collection("result").doc().set({createdAt: new Date(), raw: aggregation});
+
+
   const maxPositiveReaction = Math.max(...aggregation.map(
     (current: { totalPositiveReaction: number; }) => current.totalPositiveReaction)
   );
   const maxNegativeReaction = Math.max(...aggregation.map(
     (current: { totalNegativeReaction: number; }) => current.totalNegativeReaction)
   );
-  const createdAt = new Date();
 
   if (maxPositiveReaction === 0) {
-    await db.collection("result").doc().set({createdAt: createdAt, losers: [], winners: []});
     await postToSlack("<!channel> Pas de gagnant aujourd'hui bande de fainéant");
 
     return;
@@ -43,11 +45,6 @@ const gather = async (tsLastMessage: string, db: Firestore) => {
     (current: {totalNegativeReaction: number;}) => current.totalNegativeReaction === maxNegativeReaction
   );
 
-  logger.debug(winners);
-  logger.debug(losers);
-
-
-  await db.collection("result").doc().set({createdAt: createdAt, losers: losers, winners: winners});
 
   const msg = `<!channel>
   Les gagnants sont :
