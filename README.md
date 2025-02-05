@@ -64,3 +64,11 @@ Remplir le .env avec les infos de prod
 ```shell
 firebase deploy --only functions
 ```
+
+## Ajouter une TTL
+
+```shell
+gcloud auth login
+gcloud config set project ...
+gcloud firestore fields ttls update expireAt --collection-group=history --enable-ttl
+```
