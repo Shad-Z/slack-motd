@@ -7,7 +7,6 @@ import {gather} from "./gather";
 import {logger} from "firebase-functions";
 import {onRequest} from "firebase-functions/v2/https";
 import {httpWebhookController} from "./http-webhook-controller";
-import {leaderboard, Result} from "./leaderboard";
 
 admin.initializeApp();
 
@@ -74,21 +73,4 @@ exports.scheduledPostResult = onSchedule({schedule: "every tuesday 18:30", timeZ
 
 exports.scheduledRappelVote = onSchedule({schedule: "every tuesday 17:30", timeZone: "Europe/Paris", region: "europe-west1"}, async () => {
   await postToSlack("<!here> Hop hop hop ! On oublie pas de voter pour Mr/Mme FUN :) Résultat à 18h30 !");
-});
-
-
-exports.scheduledLeaderboard = onSchedule({schedule: "every tuesday 14:00", timeZone: "Europe/Paris", region: "europe-west1"}, async () => {
-  const resultRef = db.collection("result").orderBy("createdAt", "desc").limit(50);
-  const resultDoc = await resultRef.get();
-  if (resultDoc.empty) {
-    return;
-  }
-  const results: Result[];
-  resultDoc.forEach((doc) => {
-    const result: Result = doc.data() as Result;
-    results.push(result);
-  });
-
-  leaderboard(results);
-  await postToSlack("<!here> Leaderboard !");
 });
