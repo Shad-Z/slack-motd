@@ -1,6 +1,21 @@
 import {postToSlack, getReplies} from "./slack";
 
-const gather = async (tsLastMessage: string) => {
+interface UserPositiveReaction {
+  user: string;
+  totalPositiveReaction: number;
+}
+
+interface UserNegativeReaction {
+  user: string;
+  totalNegativeReaction: number;
+}
+
+interface Result {
+  winners: UserPositiveReaction[];
+  losers: UserNegativeReaction[];
+}
+
+const gather = async (tsLastMessage: string): Promise<Result> => {
   const replies = await getReplies(tsLastMessage);
   const messages = replies.messages?.slice(1);
 
@@ -27,7 +42,7 @@ const gather = async (tsLastMessage: string) => {
   if (maxPositiveReaction === 0) {
     await postToSlack("<!channel> Pas de gagnant aujourd'hui bande de fainéant");
 
-    return;
+    return {winners: [], losers: []};
   }
 
   const winners = aggregation.filter(
@@ -49,6 +64,8 @@ const gather = async (tsLastMessage: string) => {
   `}`;
 
   await postToSlack(msg);
+
+  return {winners: winners, losers: losers};
 };
 
 export {gather};

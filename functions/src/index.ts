@@ -68,7 +68,9 @@ exports.scheduledPostResult = onSchedule({schedule: "every tuesday 18:30", timeZ
     return;
   }
 
-  await gather(tsLastMessage);
+  const result = await gather(tsLastMessage);
+  const createdAt = new Date();
+  await db.collection("result").doc().set({createdAt: createdAt, ...result});
 });
 
 exports.scheduledRappelVote = onSchedule({schedule: "every tuesday 17:30", timeZone: "Europe/Paris", region: "europe-west1"}, async () => {
