@@ -1,6 +1,8 @@
 import {postToSlack, getReplies} from "./slack";
+import {firestore} from "firebase-admin";
+import Firestore = firestore.Firestore;
 
-const gather = async (tsLastMessage: string) => {
+const gather = async (tsLastMessage: string, db: Firestore) => {
   const replies = await getReplies(tsLastMessage);
   const messages = replies.messages?.slice(1);
 
@@ -16,6 +18,8 @@ const gather = async (tsLastMessage: string) => {
       message: current.text,
     };
   });
+
+  await db.collection("result").doc().set({createdAt: new Date(), raw: aggregation});
 
   const maxPositiveReaction = Math.max(...aggregation.map(
     (current: { totalPositiveReaction: number; }) => current.totalPositiveReaction)
