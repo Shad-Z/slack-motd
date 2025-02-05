@@ -78,17 +78,23 @@ exports.scheduledRappelVote = onSchedule({schedule: "every tuesday 17:30", timeZ
 
 
 exports.scheduledLeaderboard = onSchedule({schedule: "every tuesday 14:00", timeZone: "Europe/Paris", region: "europe-west1"}, async () => {
-  const resultRef = db.collection("result").orderBy("createdAt", "desc").limit(50);
+  const resultRef = db.collection("result").orderBy("createdAt", "desc").limit(52);
   const resultDoc = await resultRef.get();
   if (resultDoc.empty) {
     return;
   }
-  const results: Result[];
+  const results: Result[] = [];
   resultDoc.forEach((doc) => {
     const result: Result = doc.data() as Result;
     results.push(result);
   });
 
-  leaderboard(results);
-  await postToSlack("<!here> Leaderboard !");
+  const leaderboardResult = leaderboard(results);
+  const listLeaderboard = leaderboardResult.map((item) => {
+    return `* <@${item.user}> avec un total de ${item.totalPositiveReaction} réactions`;
+  }).join("\n");
+
+  const msg = `<!channel>Oyé ! Oyé ! Voici le classement de l'année : 
+  ${listLeaderboard}`;
+  await postToSlack(msg);
 });
