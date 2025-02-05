@@ -1,21 +1,10 @@
 import {postToSlack, getReplies} from "./slack";
+import {logger} from "firebase-functions";
+import {getFirestore} from "firebase-admin/firestore";
 
-interface UserPositiveReaction {
-  user: string;
-  totalPositiveReaction: number;
-}
+const db = getFirestore();
 
-interface UserNegativeReaction {
-  user: string;
-  totalNegativeReaction: number;
-}
-
-interface Result {
-  winners: UserPositiveReaction[];
-  losers: UserNegativeReaction[];
-}
-
-const gather = async (tsLastMessage: string): Promise<Result> => {
+const gather = async (tsLastMessage: string) => {
   const replies = await getReplies(tsLastMessage);
   const messages = replies.messages?.slice(1);
 
@@ -38,11 +27,13 @@ const gather = async (tsLastMessage: string): Promise<Result> => {
   const maxNegativeReaction = Math.max(...aggregation.map(
     (current: { totalNegativeReaction: number; }) => current.totalNegativeReaction)
   );
+  const createdAt = new Date();
 
   if (maxPositiveReaction === 0) {
+    await db.collection("result").doc().set({createdAt: createdAt, losers: [], winners: []});
     await postToSlack("<!channel> Pas de gagnant aujourd'hui bande de fainéant");
 
-    return {winners: [], losers: []};
+    return;
   }
 
   const winners = aggregation.filter(
@@ -51,6 +42,12 @@ const gather = async (tsLastMessage: string): Promise<Result> => {
   const losers = aggregation.filter(
     (current: {totalNegativeReaction: number;}) => current.totalNegativeReaction === maxNegativeReaction
   );
+
+  logger.debug(winners);
+  logger.debug(losers);
+
+
+  await db.collection("result").doc().set({createdAt: createdAt, losers: losers, winners: winners});
 
   const msg = `<!channel>
   Les gagnants sont :
@@ -64,8 +61,6 @@ const gather = async (tsLastMessage: string): Promise<Result> => {
   `}`;
 
   await postToSlack(msg);
-
-  return {winners: winners, losers: losers};
 };
 
 export {gather};
